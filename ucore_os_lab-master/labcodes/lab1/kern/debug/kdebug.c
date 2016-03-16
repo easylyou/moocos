@@ -302,12 +302,15 @@ print_stackframe(void) {
       *           NOTICE: the calling funciton's return addr eip  = ss:[ebp+4]
       *                   the calling funciton's ebp = ss:[ebp]
       */
-	uint32_t ebp, eip;
+	uint32_t ebp, eip, i;
 	uint32_t arg1, arg2, arg3, arg4;
 	ebp = read_ebp();
 	eip = read_eip();
-	while(ebp != 0)
+	i = 0; 
+	while(ebp != 0 && i < STACKFRAME_DEPTH)
 	{
+		i ++;
+
 		arg1 = *((uint32_t*)(ebp+8));
 		arg2 = *((uint32_t*)(ebp+12));
 		arg3 = *((uint32_t*)(ebp+16));
