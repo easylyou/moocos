@@ -260,7 +260,6 @@ default_check(void) {
     assert(PageProperty(p0) && p0->property == 1);
     assert(PageProperty(p1) && p1->property == 3);
     assert((p0 = alloc_page()) == p2 - 1);
-	while(1);
 	///////////////////////////////
     free_page(p0);
     assert((p0 = alloc_pages(2)) == p2 + 1);
