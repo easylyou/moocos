@@ -63,12 +63,15 @@ free_area_t free_area;
 //display the free_list
 void disp_free_list(void)
 {
-	list_entry_t *le;
-	
+	list_entry_t *le = &free_list;
+	struct Page *p = NULL;
+	cprintf("free_list:");
 	while((le = list_next(le)) != &free_list)
-	{
-		
+	{	
+		p = le2page(le, page_link);
+		cprintf("%x ", (uint32_t)p);
 	}
+	cprintf("\n");
 }
 /////////////////////////////////////////////
 
@@ -168,7 +171,6 @@ basic_check(void) {
     assert((p0 = alloc_page()) != NULL);
     assert((p1 = alloc_page()) != NULL);
     assert((p2 = alloc_page()) != NULL);
-	cprintf("p0 p1 p2: %x %x %x\n", (uint32_t)p0, (uint32_t)p1, (uint32_t)p2);
     assert(p0 != p1 && p0 != p2 && p1 != p2);
     assert(page_ref(p0) == 0 && page_ref(p1) == 0 && page_ref(p2) == 0);
 
@@ -228,6 +230,8 @@ default_check(void) {
     basic_check();
 
     struct Page *p0 = alloc_pages(5), *p1, *p2;
+	cprintf("p0 : %x \n", (uint32_t)p0);
+	disp_free_list();
     assert(p0 != NULL);
     assert(!PageProperty(p0));
 
@@ -240,19 +244,23 @@ default_check(void) {
     nr_free = 0;
 
     free_pages(p0 + 2, 3);
+	disp_free_list();
     assert(alloc_pages(4) == NULL);
     assert(PageProperty(p0 + 2) && p0[2].property == 3);
     assert((p1 = alloc_pages(3)) != NULL);
+	disp_free_list();
     assert(alloc_page() == NULL);
     assert(p0 + 2 == p1);
 
     p2 = p0 + 1;
     free_page(p0);
+	disp_free_list();
     free_pages(p1, 3);
+	disp_free_list();
     assert(PageProperty(p0) && p0->property == 1);
     assert(PageProperty(p1) && p1->property == 3);
-
     assert((p0 = alloc_page()) == p2 - 1);
+	while(1);
 	///////////////////////////////
     free_page(p0);
     assert((p0 = alloc_pages(2)) == p2 + 1);
