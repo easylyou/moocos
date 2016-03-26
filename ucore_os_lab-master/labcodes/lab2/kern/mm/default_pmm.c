@@ -155,8 +155,28 @@ default_free_pages(struct Page *base, size_t n) {
             list_del(&(p->page_link));
         }
     }
-    nr_free += n;
-    list_add(&free_list, &(base->page_link));
+   // nr_free += n;
+	if (nr_free)
+	{
+		nr_free += n;
+		le = &free_list;
+		do {
+			le = list_next(le);
+			p = le2page(le, page_link);
+			cprintf("$$$$$%x$$$$\n", p);
+			if (base > p)
+			{
+				list_add(le, &(base->page_link));
+				break;
+			}
+		} while(le != &free_list);
+	}
+	else
+	{
+		nr_free += n;
+	    list_add(&free_list, &(base->page_link));
+	}
+//    list_add(&free_list, &(base->page_link));
 }
 
 static size_t
