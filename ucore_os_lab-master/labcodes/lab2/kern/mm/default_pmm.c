@@ -61,7 +61,7 @@ free_area_t free_area;
 
 /////////////////////////////////////////////
 //display the free_list
-void disp_free_list(void)
+/*void disp_free_list(void)
 {
 	list_entry_t *le = &free_list;
 	struct Page *p = NULL;
@@ -72,7 +72,7 @@ void disp_free_list(void)
 		cprintf("%x ", (uint32_t)p);
 	}
 	cprintf("\n");
-}
+}*/
 /////////////////////////////////////////////
 
 
@@ -86,14 +86,11 @@ static void
 default_init_memmap(struct Page *base, size_t n) {
     assert(n > 0);
     struct Page *p = base;
-	cprintf("base:%x n:%d\n", (uint32_t)base,n);
     for (; p != base + n; p ++) {
         assert(PageReserved(p));
         p->flags = p->property = 0;
         set_page_ref(p, 0);
-		//cprintf("p:%x ", (uint32_t)p);
     }
-	//cprintf("\n");
     base->property = n;
     SetPageProperty(base);
     nr_free += n;
@@ -163,7 +160,6 @@ default_free_pages(struct Page *base, size_t n) {
 		do {
 			le = list_next(le);
 			p = le2page(le, page_link);
-			cprintf("$$$$$%x$$$$\n", p);
 			if (base > p)
 			{
 				list_add(le, &(base->page_link));
@@ -250,8 +246,7 @@ default_check(void) {
     basic_check();
 
     struct Page *p0 = alloc_pages(5), *p1, *p2;
-	cprintf("p0 : %x \n", (uint32_t)p0);
-	disp_free_list();
+	//disp_free_list();
     assert(p0 != NULL);
     assert(!PageProperty(p0));
 
@@ -264,19 +259,19 @@ default_check(void) {
     nr_free = 0;
 
     free_pages(p0 + 2, 3);
-	disp_free_list();
+	//disp_free_list();
     assert(alloc_pages(4) == NULL);
     assert(PageProperty(p0 + 2) && p0[2].property == 3);
     assert((p1 = alloc_pages(3)) != NULL);
-	disp_free_list();
+	//disp_free_list();
     assert(alloc_page() == NULL);
     assert(p0 + 2 == p1);
 
     p2 = p0 + 1;
     free_page(p0);
-	disp_free_list();
+	//disp_free_list();
     free_pages(p1, 3);
-	disp_free_list();
+	//disp_free_list();
     assert(PageProperty(p0) && p0->property == 1);
     assert(PageProperty(p1) && p1->property == 3);
     assert((p0 = alloc_page()) == p2 - 1);
