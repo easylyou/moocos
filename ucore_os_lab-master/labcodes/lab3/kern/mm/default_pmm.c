@@ -59,6 +59,23 @@ free_area_t free_area;
 #define free_list (free_area.free_list)
 #define nr_free (free_area.nr_free)
 
+/////////////////////////////////////////////
+//display the free_list
+/*void disp_free_list(void)
+{
+	list_entry_t *le = &free_list;
+	struct Page *p = NULL;
+	cprintf("free_list:");
+	while((le = list_next(le)) != &free_list)
+	{	
+		p = le2page(le, page_link);
+		cprintf("%x ", (uint32_t)p);
+	}
+	cprintf("\n");
+}*/
+/////////////////////////////////////////////
+
+
 static void
 default_init(void) {
     list_init(&free_list);
@@ -101,7 +118,7 @@ default_alloc_pages(size_t n) {
             struct Page *p = page + n;
             p->property = page->property - n;
             list_add(&free_list, &(p->page_link));
-    }
+    	}
         nr_free -= n;
         ClearPageProperty(page);
     }
@@ -135,8 +152,27 @@ default_free_pages(struct Page *base, size_t n) {
             list_del(&(p->page_link));
         }
     }
-    nr_free += n;
-    list_add(&free_list, &(base->page_link));
+   // nr_free += n;
+	if (nr_free)
+	{
+		nr_free += n;
+		le = &free_list;
+		do {
+			le = list_next(le);
+			p = le2page(le, page_link);
+			if (base > p)
+			{
+				list_add(le, &(base->page_link));
+				break;
+			}
+		} while(le != &free_list);
+	}
+	else
+	{
+		nr_free += n;
+	    list_add(&free_list, &(base->page_link));
+	}
+//    list_add(&free_list, &(base->page_link));
 }
 
 static size_t
@@ -151,7 +187,6 @@ basic_check(void) {
     assert((p0 = alloc_page()) != NULL);
     assert((p1 = alloc_page()) != NULL);
     assert((p2 = alloc_page()) != NULL);
-
     assert(p0 != p1 && p0 != p2 && p1 != p2);
     assert(page_ref(p0) == 0 && page_ref(p1) == 0 && page_ref(p2) == 0);
 
@@ -211,6 +246,7 @@ default_check(void) {
     basic_check();
 
     struct Page *p0 = alloc_pages(5), *p1, *p2;
+	//disp_free_list();
     assert(p0 != NULL);
     assert(!PageProperty(p0));
 
@@ -223,19 +259,23 @@ default_check(void) {
     nr_free = 0;
 
     free_pages(p0 + 2, 3);
+	//disp_free_list();
     assert(alloc_pages(4) == NULL);
     assert(PageProperty(p0 + 2) && p0[2].property == 3);
     assert((p1 = alloc_pages(3)) != NULL);
+	//disp_free_list();
     assert(alloc_page() == NULL);
     assert(p0 + 2 == p1);
 
     p2 = p0 + 1;
     free_page(p0);
+	//disp_free_list();
     free_pages(p1, 3);
+	//disp_free_list();
     assert(PageProperty(p0) && p0->property == 1);
     assert(PageProperty(p1) && p1->property == 3);
-
     assert((p0 = alloc_page()) == p2 - 1);
+	///////////////////////////////
     free_page(p0);
     assert((p0 = alloc_pages(2)) == p2 + 1);
 
