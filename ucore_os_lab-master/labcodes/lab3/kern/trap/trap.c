@@ -155,7 +155,7 @@ print_pgfault(struct trapframe *tf) {
     cprintf("page fault at 0x%08x: %c/%c [%s].\n", rcr2(),
             (tf->tf_err & 4) ? 'U' : 'K',
             (tf->tf_err & 2) ? 'W' : 'R',
-            (tf->tf_err & 1) ? "protection fault" : "no page found");
+            (tf->tf_err & 1) ? "protection fault" : "no page found"); 
 }
 
 static int

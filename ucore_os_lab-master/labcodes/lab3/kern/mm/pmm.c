@@ -154,7 +154,6 @@ struct Page *
 alloc_pages(size_t n) {
     struct Page *page=NULL;
     bool intr_flag;
-    
     while (1)
     {
          local_intr_save(intr_flag);
