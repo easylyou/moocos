@@ -251,7 +251,6 @@ check_pgfault(void) {
 
     uintptr_t addr = 0x100;
     assert(find_vma(mm, addr) == vma);
-
     int i, sum = 0;
     for (i = 0; i < 100; i ++) {
         *(char *)(addr + i) = i;
@@ -261,7 +260,6 @@ check_pgfault(void) {
         sum -= *(char *)(addr + i);
     }
     assert(sum == 0);
-
     page_remove(pgdir, ROUNDDOWN(addr, PGSIZE));
     free_page(pde2page(pgdir[0]));
     pgdir[0] = 0;
@@ -303,7 +301,7 @@ do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
     int ret = -E_INVAL;
     //try to find a vma which include addr
     struct vma_struct *vma = find_vma(mm, addr);
-
+	
     pgfault_num++;
     //If the addr is in the range of a mm's vma?
     if (vma == NULL || vma->vm_start > addr) {
@@ -361,6 +359,66 @@ do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
     *   mm->pgdir : the PDT of these vma
     *
     */
+	if ((ptep = get_pte(mm->pgdir, addr, 1)) == NULL)
+	{
+		cprintf("get_pte in do_pgfault failed\n");
+		goto failed;
+	}
+	if (*ptep == 0)
+	{
+		if (pgdir_alloc_page(mm->pgdir, addr, perm) == NULL)
+		{
+			cprintf("pgdir_alloc_page in do_pgfault failed\n");
+			goto failed;
+		}
+	}
+	else
+	{
+		if (swap_init_ok)
+		{
+			struct Page *page = NULL;
+			if ((ret = swap_in(mm, addr, &page)) != 0)
+			{
+				cprintf("swap_in in do_pgfault failed\n");
+				goto failed;
+			}
+			page_insert(mm->pgdir, page, addr, perm);
+			swap_map_swappable(mm, addr, page, 1);
+			page->pra_vaddr = addr;
+
+		}
+		else
+		{
+			cprintf("no swap_init_ok but ptep is %x, failed\n", *ptep);
+			goto failed;
+		}
+	}
+/*	ptep = get_pte(mm->pgdir, addr, 1);
+	if (*ptep == 0) //page table null
+	{
+		pgdir_alloc_page(mm->pgdir, addr, perm);
+	}
+	else
+	{
+		if (swap_init_ok)
+		{
+			struct Page *page = NULL;
+			//swap_in(mm, addr, page);
+			if((ret = swap_in(mm, addr, &page)) != 0)
+			{
+				cprintf("Failed swap_in in do_pgfault\n");
+				goto failed;
+			}
+			page_insert(mm->pgdir, page, addr, perm);
+			swap_map_swappable(mm->pgdir, addr, page, 1);
+			page->pra_vaddr = addr;
+		}
+		else 
+		{
+			cprintf("no swap_init_ok but ptep is %x, failed\n", *ptep);
+			goto failed;
+		}
+	}*/
 #if 0
     /*LAB3 EXERCISE 1: YOUR CODE*/
     ptep = ???              //(1) try to find a pte, if pte's PT(Page Table) isn't existed, then create a PT.
