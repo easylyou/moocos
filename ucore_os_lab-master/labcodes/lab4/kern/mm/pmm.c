@@ -452,14 +452,13 @@ page_remove_pte(pde_t *pgdir, uintptr_t la, pte_t *ptep) {
 	if (*ptep & PTE_P && ptep != NULL)
 	{
 		struct Page *page = pte2page(*ptep);
-        page_ref_dec(page);
-		if (page->ref == 0)
+        if (page_ref_dec(page) == 0)
 		{
 			free_page(page);
-			*ptep = 0;
 		}
+		*ptep = 0;
+    	tlb_invalidate(pgdir, la);
 	}
-    tlb_invalidate(pgdir, la);
 }
 
 //page_remove - free an Page which is related linear address la and has an validated pte
