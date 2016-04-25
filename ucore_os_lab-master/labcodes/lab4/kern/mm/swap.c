@@ -184,6 +184,7 @@ check_swap(void)
      while ((le = list_next(le)) != &free_list) {
         struct Page *p = le2page(le, page_link);
         assert(PageProperty(p));
+
         count ++, total += p->property;
      }
      assert(total == nr_free_pages());

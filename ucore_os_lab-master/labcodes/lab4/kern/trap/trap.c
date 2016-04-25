@@ -248,7 +248,7 @@ trap_dispatch(struct trapframe *tf) {
         break;
     //LAB1 CHALLENGE 1 : YOUR CODE you should modify below codes.
     case T_SWITCH_TOU:
-    	kernel2user(tf);
+    //	kernel2user(tf);
 /*    	if (tf->tf_cs != USER_CS)
     	{
     		switchk2u = *tf;
@@ -263,7 +263,7 @@ trap_dispatch(struct trapframe *tf) {
     	break;
     case T_SWITCH_TOK:
         //panic("T_SWITCH_** ??\n");
-        user2kernel(tf);
+    //    user2kernel(tf);
 /*        if (tf->tf_cs != KERNEL_CS)
 		{
 			tf->tf_cs = KERNEL_CS;
