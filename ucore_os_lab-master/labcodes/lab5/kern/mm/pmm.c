@@ -155,7 +155,6 @@ struct Page *
 alloc_pages(size_t n) {
     struct Page *page=NULL;
     bool intr_flag;
-    
     while (1)
     {
          local_intr_save(intr_flag);
@@ -384,18 +383,27 @@ get_pte(pde_t *pgdir, uintptr_t la, bool create) {
      *   PTE_W           0x002                   // page table/directory entry flags bit : Writeable
      *   PTE_U           0x004                   // page table/directory entry flags bit : User can access
      */
-#if 0
-    pde_t *pdep = NULL;   // (1) find page directory entry
-    if (0) {              // (2) check if entry is not present
-                          // (3) check if creating is needed, then alloc page for page table
-                          // CAUTION: this page is used for page table, not for common data page
-                          // (4) set page reference
-        uintptr_t pa = 0; // (5) get linear address of page
-                          // (6) clear page content using memset
-                          // (7) set page directory entry's permission
+//#if 0
+    pde_t *pdep = NULL;  							 // (1) find page directory entry
+	pdep = &pgdir[PDX(la)];
+    if (!*pdep & PTE_P) {              		// (2) check if entry is not present
+		struct Page *pg;
+		if (create && (pg = alloc_page()) != NULL) {				 // (3) check if creating is needed, then alloc page for page table
+															    // CAUTION: this page is used for page table, not for common data page
+			set_page_ref(pg, 1); // (4) set page reference
+			uintptr_t pa = page2pa(pg);// (5) get linear address of page
+			memset(KADDR(pa), 0, PGSIZE);// (6) clear page content using memset
+			//cprintf("pa = %x####\n", pa&(~0xFFF)|PTE_P | PTE_W | PTE_U);
+			*pdep = ((pa & (~0xFFF)) | PTE_P | PTE_W | PTE_U);// (7) set page directory entry's permission
+			//cprintf("*pdep = %x\n",(uint32_t)*pdep);	
+		}
+		else
+		{
+			return NULL;
+		}
     }
-    return NULL;          // (8) return page table entry
-#endif
+    return &((pte_t*)KADDR(PDE_ADDR(*pdep)))[PTX(la)];// NULL;          // (8) return page table entry
+//#endif
 }
 
 //get_page - get related Page struct for linear address la using PDT pgdir
@@ -441,6 +449,16 @@ page_remove_pte(pde_t *pgdir, uintptr_t la, pte_t *ptep) {
                                   //(6) flush tlb
     }
 #endif
+	if (*ptep & PTE_P && ptep != NULL)
+	{
+		struct Page *page = pte2page(*ptep);
+        if (page_ref_dec(page) == 0)
+		{
+			free_page(page);
+		}
+		*ptep = 0;
+    	tlb_invalidate(pgdir, la);
+	}
 }
 
 void
@@ -553,6 +571,7 @@ page_insert(pde_t *pgdir, struct Page *page, uintptr_t la, uint32_t perm) {
         return -E_NO_MEM;
     }
     page_ref_inc(page);
+	//cprintf("ptep: %x\n", *ptep);
     if (*ptep & PTE_P) {
         struct Page *p = pte2page(*ptep);
         if (p == page) {

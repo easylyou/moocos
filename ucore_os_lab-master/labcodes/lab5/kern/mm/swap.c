@@ -96,7 +96,7 @@ swap_out(struct mm_struct *mm, int n, int in_tick)
           }          
           //assert(!PageReserved(page));
 
-          //cprintf("SWAP: choose victim page 0x%08x\n", page);
+         // cprintf("SWAP: choose victim page 0x%08x\n", page);
           
           v=page->pra_vaddr; 
           pte_t *ptep = get_pte(mm->pgdir, v, 0);
@@ -125,7 +125,8 @@ swap_in(struct mm_struct *mm, uintptr_t addr, struct Page **ptr_result)
      assert(result!=NULL);
 
      pte_t *ptep = get_pte(mm->pgdir, addr, 0);
-     // cprintf("SWAP: load ptep %x swap entry %d to vaddr 0x%08x, page %x, No %d\n", ptep, (*ptep)>>8, addr, result, (result-pages));
+      cprintf("SWAP: load ptep %x swap entry %d to vaddr 0x%08x, page %x, No %d\n", ptep, (*ptep)>>8, addr, result, (result-pages));
+
     
      int r;
      if ((r = swapfs_read((*ptep), result)) != 0)
@@ -185,6 +186,7 @@ check_swap(void)
      while ((le = list_next(le)) != &free_list) {
         struct Page *p = le2page(le, page_link);
         assert(PageProperty(p));
+
         count ++, total += p->property;
      }
      assert(total == nr_free_pages());
@@ -213,7 +215,7 @@ check_swap(void)
      temp_ptep = get_pte(mm->pgdir, BEING_CHECK_VALID_VADDR, 1);
      assert(temp_ptep!= NULL);
      cprintf("setup Page Table vaddr 0~4MB OVER!\n");
-     
+    
      for (i=0;i<CHECK_VALID_PHY_PAGE_NUM;i++) {
           check_rp[i] = alloc_page();
           assert(check_rp[i] != NULL );

@@ -1,0 +1,27 @@
+--- kern/trap/trap.c	2016-04-26 11:56:55.317039000 +0800
++++ kern/trap/trap.c	2016-04-24 20:43:11.370528754 +0800
+@@ -49,6 +50,14 @@
+       *     You don't know the meaning of this instruction? just google it! and check the libs/x86.h to know more.
+       *     Notice: the argument of lidt is idt_pd. try to find it!
+       */
++    int i = 0;
++	for (i = 0; i < sizeof(idt)/sizeof(struct gatedesc); i ++) 
++	{
++		SETGATE(idt[i], 0, GD_KTEXT, __vectors[i], DPL_KERNEL); 
++	}
++	SETGATE(idt[T_SWITCH_TOK], 0, GD_KTEXT, __vectors[T_SWITCH_TOK], DPL_USER);
++	lidt(&idt_pd);
++//	asm("lidt idt_pd");
+ }
+ 
+ static const char *
+@@ -217,6 +256,9 @@
+          * (2) Every TICK_NUM cycle, you can print some info using a funciton, such as print_ticks().
+          * (3) Too Simple? Yes, I think so!
+          */
++        ticks ++;
++        if (ticks % TICK_NUM == 0)
++       		print_ticks();
+         break;
+     case IRQ_OFFSET + IRQ_COM1:
+         c = cons_getc();

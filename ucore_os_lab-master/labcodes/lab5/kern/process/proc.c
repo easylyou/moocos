@@ -103,6 +103,18 @@ alloc_proc(void) {
      *       uint32_t flags;                             // Process flag
      *       char name[PROC_NAME_LEN + 1];               // Process name
      */
+ 		proc->state = PROC_UNINIT;
+		proc->pid = -1;
+		proc->runs = 0;
+		proc->kstack = 0;
+		proc->need_resched = 0;
+		proc->parent = NULL;
+		proc->mm = NULL;
+	 	memset(&(proc->context), 0, sizeof(struct context));
+		proc->tf = NULL;
+		proc->cr3 = boot_cr3;
+		proc->flags = 0;
+		memset(proc->name, 0, PROC_NAME_LEN);
      //LAB5 YOUR CODE : (update LAB4 steps)
     /*
      * below fields(add in LAB5) in proc_struct need to be initialized	
@@ -387,6 +399,30 @@ do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf) {
      *   proc_list:    the process set's list
      *   nr_process:   the number of process set
      */
+    if ((proc = alloc_proc()) == NULL) {
+        //panic("cannot alloc initproc.\n");
+		goto fork_out;
+    }
+	proc->parent =  current;
+	if (setup_kstack(proc) != 0) {
+	//	panic("cannot setup_kstack.\n");
+		goto bad_fork_cleanup_proc;
+	}
+	if (copy_mm(clone_flags, initproc) != 0) {
+		goto bad_fork_cleanup_kstack;
+	}
+	copy_thread(proc, stack, tf);
+	bool intr_flag;
+	local_intr_save(intr_flag);
+	{
+		proc->pid = get_pid();
+		hash_proc(proc);
+		list_add(&proc_list, &(proc->list_link));
+		nr_process ++;
+	}
+	local_intr_restore(intr_flag);
+	wakeup_proc(proc);
+	ret = proc->pid;
 
     //    1. call alloc_proc to allocate a proc_struct
     //    2. call setup_kstack to allocate a kernel stack for child process
@@ -835,7 +871,6 @@ proc_init(void) {
     if (pid <= 0) {
         panic("create init_main failed.\n");
     }
-
     initproc = find_proc(pid);
     set_proc_name(initproc, "init");
 
