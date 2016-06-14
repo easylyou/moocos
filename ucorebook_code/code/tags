@@ -1,0 +1,119 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+.DEFAULT_GOAL	Makefile	/^.DEFAULT_GOAL := TARGETS$/;"	m
+ALLDEPS	Makefile	/^ALLDEPS	:=$/;"	m
+ALLOBJS	Makefile	/^ALLOBJS	:=$/;"	m
+BINDIR	Makefile	/^BINDIR	:= bin$/;"	m
+CC	Makefile	/^CC		:= $(GCCPREFIX)gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS	:= -fno-builtin -Wall -ggdb -m32 -nostdinc$/;"	m
+COM1	boot/bootmain.c	4;"	d	file:
+COM_LSR	boot/bootmain.c	8;"	d	file:
+COM_LSR_TXRDY	boot/bootmain.c	9;"	d	file:
+COM_TX	boot/bootmain.c	7;"	d	file:
+COPY	Makefile	/^COPY	:= cp$/;"	m
+CRTPORT	boot/bootmain.c	5;"	d	file:
+CTYPE	Makefile	/^CTYPE	:= c S$/;"	m
+Disassembly	obj/bootblock.asm	/^Disassembly of section .text:$/;"	l
+EMPTY	Makefile	/^EMPTY	:=$/;"	m
+GCCPREFIX	Makefile	/^GCCPREFIX := $(shell if i386-ucore-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >\/dev\/null 2>&1; \\$/;"	m
+GDB	Makefile	/^GDB		:= $(GCCPREFIX)gdb$/;"	m
+HOSTCC	Makefile	/^HOSTCC		:= gcc$/;"	m
+HOSTCFLAGS	Makefile	/^HOSTCFLAGS	:= -g -Wall -O2$/;"	m
+LD	Makefile	/^LD      := $(GCCPREFIX)ld$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS	:= -m $(shell $(LD) -V | grep elf_i386 2>\/dev\/null)$/;"	m
+LPTPORT	boot/bootmain.c	6;"	d	file:
+MKDIR	Makefile	/^MKDIR   := mkdir -p$/;"	m
+MV	Makefile	/^MV		:= mv$/;"	m
+NULL	libs/types.h	5;"	d
+OBJCOPY	Makefile	/^OBJCOPY := $(GCCPREFIX)objcopy$/;"	m
+OBJDIR	Makefile	/^OBJDIR	:= obj$/;"	m
+OBJDUMP	Makefile	/^OBJDUMP := $(GCCPREFIX)objdump$/;"	m
+OBJPREFIX	tools/function.mk	/^OBJPREFIX	:= __objs_$/;"	m
+QEMU	Makefile	/^QEMU := $(shell if which qemu > \/dev\/null; \\$/;"	m
+RM	Makefile	/^RM		:= rm -f$/;"	m
+SEG_ASM	boot/asm.h	11;"	d
+SEG_NULLASM	boot/asm.h	7;"	d
+SLASH	Makefile	/^SLASH	:= \/$/;"	m
+SPACE	Makefile	/^SPACE	:= $(EMPTY) $(EMPTY)$/;"	m
+STA_A	boot/asm.h	23;"	d
+STA_C	boot/asm.h	20;"	d
+STA_E	boot/asm.h	19;"	d
+STA_R	boot/asm.h	22;"	d
+STA_W	boot/asm.h	21;"	d
+STA_X	boot/asm.h	18;"	d
+TARGETS	Makefile	/^TARGETS	:=$/;"	m
+TERMINAL	Makefile	/^TERMINAL := gnome-terminal$/;"	m
+UCOREIMG	Makefile	/^UCOREIMG	:= $(call totarget,ucore.img)$/;"	m
+V	Makefile	/^V       := @$/;"	m
+__BOOT_ASM_H__	boot/asm.h	2;"	d
+__LIBS_TYPES_H__	libs/types.h	2;"	d
+__LIBS_X86_H__	libs/x86.h	2;"	d
+add_dependency	tools/function.mk	/^add_dependency = $(eval $(1): $(2))$/;"	m
+add_files	tools/function.mk	/^add_files = $(eval $(call do_add_files_to_packet,$(1),$(2),$(3),$(4),$(5)))$/;"	m
+add_files_cc	Makefile	/^add_files_cc = $(call add_files,$(1),$(CC),$(CFLAGS) $(3),$(2),$(4))$/;"	m
+add_files_host	Makefile	/^add_files_host = $(call add_files,$(1),$(HOSTCC),$(HOSTCFLAGS),$(2),$(3))$/;"	m
+add_objs	tools/function.mk	/^add_objs = $(eval $(call do_add_objs_to_packet,$(1),$(2)))$/;"	m
+asmfile	Makefile	/^asmfile = $(call cgtype,$(call toobj,$(1)),o,asm)$/;"	m
+barrier	libs/x86.h	6;"	d
+bool	libs/types.h	/^typedef int bool;$/;"	t
+bootblock	Makefile	/^bootblock = $(call totarget,bootblock)$/;"	m
+bootfiles	Makefile	/^bootfiles = $(call listf_cc,boot)$/;"	m
+bootmain	boot/bootmain.c	/^bootmain(void) {$/;"	f
+cc_compile	tools/function.mk	/^cc_compile = $(eval $(call do_cc_compile,$(1),$(2),$(3),$(4)))$/;"	m
+cc_template	tools/function.mk	/^define cc_template$/;"	m
+cga_putc	boot/bootmain.c	/^cga_putc(int c) {$/;"	f	file:
+cgtype	Makefile	/^cgtype = $(patsubst %.$(2),%.$(3),$(1))$/;"	m
+cons_putc	boot/bootmain.c	/^cons_putc(int c) {$/;"	f	file:
+cons_puts	boot/bootmain.c	/^cons_puts(const char *str) {$/;"	f	file:
+create_target	tools/function.mk	/^create_target = $(eval $(call do_create_target,$(1),$(2),$(3),$(4),$(5)))$/;"	m
+create_target_cc	Makefile	/^create_target_cc = $(call create_target,$(1),$(2),$(3),$(CC),$(CFLAGS))$/;"	m
+create_target_host	Makefile	/^create_target_host = $(call create_target,$(1),$(2),$(3),$(HOSTCC),$(HOSTCFLAGS))$/;"	m
+crt	boot/bootmain.c	/^static uint16_t *crt = (uint16_t *) 0xB8000;        \/\/ CGA memory$/;"	v	file:
+delay	boot/bootmain.c	/^delay(void) {$/;"	f	file:
+do_add_files_to_packet	tools/function.mk	/^define do_add_files_to_packet$/;"	m
+do_add_objs_to_packet	tools/function.mk	/^define do_add_objs_to_packet$/;"	m
+do_cc_compile	tools/function.mk	/^define do_cc_compile$/;"	m
+do_create_target	tools/function.mk	/^define do_create_target$/;"	m
+do_finish_all	tools/function.mk	/^define do_finish_all$/;"	m
+finish_all	tools/function.mk	/^finish_all = $(eval $(call do_finish_all))$/;"	m
+gdt	boot/bootasm.S	/^gdt:$/;"	l
+gdtdesc	boot/bootasm.S	/^gdtdesc:$/;"	l
+inb	libs/x86.h	/^inb(uint16_t port) {$/;"	f
+int16_t	libs/types.h	/^typedef short int16_t;$/;"	t
+int32_t	libs/types.h	/^typedef int int32_t;$/;"	t
+int64_t	libs/types.h	/^typedef long long int64_t;$/;"	t
+int8_t	libs/types.h	/^typedef char int8_t;$/;"	t
+listf	tools/function.mk	/^listf = $(filter $(if $(2),$(addprefix %.,$(2)),%),\\$/;"	m
+listf_cc	Makefile	/^listf_cc = $(call listf,$(1),$(CTYPE))$/;"	m
+lpt_putc	boot/bootmain.c	/^lpt_putc(int c) {$/;"	f	file:
+main	tools/sign.c	/^main(int argc, char *argv[]) {$/;"	f
+objfile	Makefile	/^objfile = $(call toobj,$(1))$/;"	m
+outb	libs/x86.h	/^outb(uint16_t port, uint8_t data) {$/;"	f
+outfile	Makefile	/^outfile = $(call cgtype,$(call toobj,$(1)),o,out)$/;"	m
+packetname	tools/function.mk	/^packetname = $(if $(1),$(addprefix $(OBJPREFIX),$(1)),$(OBJPREFIX))$/;"	m
+pos	obj/bootblock.asm	/^    pos = inb(CRTPORT + 1) << 8;$/;"	d
+protcseg	boot/bootasm.S	/^protcseg:$/;"	l
+protcseg	obj/bootblock.asm	/^protcseg:$/;"	l
+read_packet	tools/function.mk	/^read_packet = $(foreach p,$(call packetname,$(1)),$($(p)))$/;"	m
+serial_putc	boot/bootmain.c	/^serial_putc(int c) {$/;"	f	file:
+spin	boot/bootasm.S	/^spin:$/;"	l
+spin	obj/bootblock.asm	/^spin:$/;"	l
+start	boot/bootasm.S	/^start:$/;"	l
+start	obj/bootblock.asm	/^start:$/;"	l
+static	obj/bootblock.asm	/^static inline uint8_t$/;"	l
+static	obj/bootblock.asm	/^static inline void outb(uint16_t port, uint8_t data) __attribute__((always_inline));$/;"	l
+static	obj/bootblock.asm	/^static inline void$/;"	l
+static	obj/bootblock.asm	/^static void$/;"	l
+symfile	Makefile	/^symfile = $(call cgtype,$(call toobj,$(1)),o,sym)$/;"	m
+todep	tools/function.mk	/^todep = $(patsubst %.o,%.d,$(call toobj,$(1),$(2)))$/;"	m
+toobj	tools/function.mk	/^toobj = $(addprefix $(OBJDIR)$(SLASH)$(if $(2),$(2)$(SLASH)),\\$/;"	m
+totarget	tools/function.mk	/^totarget = $(addprefix $(BINDIR)$(SLASH),$(1))$/;"	m
+uint16_t	libs/types.h	/^typedef unsigned short uint16_t;$/;"	t
+uint32_t	libs/types.h	/^typedef unsigned int uint32_t;$/;"	t
+uint64_t	libs/types.h	/^typedef unsigned long long uint64_t;$/;"	t
+uint8_t	libs/types.h	/^typedef unsigned char uint8_t;$/;"	t
+void	obj/bootblock.asm	/^void$/;"	l
